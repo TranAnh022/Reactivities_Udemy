@@ -1,29 +1,27 @@
 import { SyntheticEvent, useState } from "react";
-import { Activity } from "../../../app/models/activity";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
+import { useStore } from "../../../app/store/store";
+import { observer } from "mobx-react-lite";
 
-type Props = {
-  activities: Activity[];
-  selectActivity: (id: string) => void;
-  deleteActivity: (id: string) => void;
-  submitting: boolean;
-};
 
-export const ActivityList = (props: Props) => {
+
+const ActivityList = () => {
   const [target, setTarget] = useState("");
+  const { activityStore } = useStore();
+  const { deleteActivity,loading,activitiesByDate } = activityStore;
 
   function handleActivityDelete(
     e: SyntheticEvent<HTMLButtonElement>,
     id: string
   ) {
     setTarget(e.currentTarget.name);
-    props.deleteActivity(id);
+    deleteActivity(id);
   }
 
   return (
     <Segment>
       <Item.Group divided>
-        {props.activities?.map((activity) => (
+        {activitiesByDate?.map((activity) => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
@@ -36,7 +34,7 @@ export const ActivityList = (props: Props) => {
               </Item.Description>
               <Item.Extra>
                 <Button
-                  onClick={() => props.selectActivity(activity.id)}
+                  onClick={() => activityStore.selectActivity(activity.id)}
                   floated="right"
                   content="View"
                   color="blue"
@@ -46,7 +44,7 @@ export const ActivityList = (props: Props) => {
                   floated="right"
                   content="Delete"
                   color="red"
-                  loading={props.submitting && target === activity.id}
+                  loading={loading && target === activity.id}
                   name={activity.id}
                 />
                 <Label basic content={activity.category} />
@@ -58,3 +56,5 @@ export const ActivityList = (props: Props) => {
     </Segment>
   );
 };
+
+export default observer(ActivityList);
