@@ -1,4 +1,4 @@
-import "./style.css";
+
 import Navbar from "./Navbar";
 import { Container } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
