@@ -3,6 +3,7 @@ import { Activity } from "../models/activity";
 import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import { store } from "../store/store";
+import { User, UserFormValues } from "../models/user";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -12,6 +13,13 @@ const sleep = (delay: number) => {
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
+//this axios.interceptors function use for adding the token header to the request
+axios.interceptors.request.use(config => {
+  const token = store.commonStore.token;
+  if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
+  return config
+})
+
 //axios.interceptors useful for tasks like adding authentication tokens, error handling, or response data preprocessing before it's used in your application
 axios.interceptors.response.use(
   async (response) => {
@@ -19,17 +27,17 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const { data, status,config } = error.response as AxiosResponse;
+    const { data, status, config } = error.response as AxiosResponse;
     switch (status) {
       case 400:
-        if (config.method === 'get' && data.errors.hasOwnProperty('id')) {
-          router.navigate('/not-found');
+        if (config.method === "get" && data.errors.hasOwnProperty("id")) {
+          router.navigate("/not-found");
         }
         if (data.errors) {
           const modalStateErrors = [];
           for (const key in data.errors) {
             if (data.errors[key]) {
-              modalStateErrors.push(data.errors[key])
+              modalStateErrors.push(data.errors[key]);
             }
           }
           throw modalStateErrors.flat();
@@ -48,10 +56,10 @@ axios.interceptors.response.use(
         break;
       case 500:
         store.commonStore.setServerError(data);
-        router.navigate('/server-error');
+        router.navigate("/server-error");
         break;
     }
-     return Promise.reject(error);
+    return Promise.reject(error);
   }
 );
 
@@ -74,8 +82,15 @@ const Activities = {
   delete: (id: string) => request.delete<void>(`/activities/${id}`),
 };
 
+const Account = {
+  current: () => request.get<User>("/account"),
+  login: (user: UserFormValues) => request.post<User>("/account/login", user),
+  register: (user: UserFormValues) =>
+    request.post<User>("/account/register", user),
+};
 const agent = {
   Activities,
+  Account
 };
 
 export default agent;
