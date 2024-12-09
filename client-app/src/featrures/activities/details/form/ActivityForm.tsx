@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "../../../../app/store/store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Activity } from "../../../../app/models/activity";
+import {ActivityFormValues } from "../../../../app/models/activity";
 import LoadingComponent from "../../../../app/layout/LoadingComponent";
 import { v4 as uuid } from "uuid";
 import { Formik, Form } from "formik";
@@ -26,15 +26,9 @@ const ActivityForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    category: "",
-    date: null,
-    city: "",
-    venue: "",
-    description: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(
+    new ActivityFormValues()
+  );
 
   const validationSchema = Yup.object({
     title: Yup.string().required("The activity title is required"),
@@ -46,14 +40,20 @@ const ActivityForm = () => {
   });
 
   useEffect(() => {
-    id && loadActivity(id).then((activity) => setActivity(activity!));
+    id &&
+      loadActivity(id).then((activity) =>
+        setActivity(new ActivityFormValues(activity))
+      );
   }, [id, loadActivity]);
 
-  function handleFormSubmit(activity: Activity) {
+  function handleFormSubmit(activity: ActivityFormValues) {
     if (!activity.id) {
-      activity.id = uuid();
-      createActivity(activity).then(() =>
-        navigate(`/activities/${activity.id}`)
+      let newActivity = {
+        ...activity,
+        id: uuid()
+      }
+      createActivity(newActivity).then(() =>
+        navigate(`/activities/${newActivity.id}`)
       );
     } else {
       updateActivity(activity).then(() =>

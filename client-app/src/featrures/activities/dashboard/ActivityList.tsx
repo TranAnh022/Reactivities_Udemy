@@ -15,6 +15,7 @@ const ActivityList = () => {
             {group}
           </Header>
           {activities?.map((activity) => (
+            
             <ActivityListItem activity={activity} key={activity.id} />
           ))}
         </Fragment>

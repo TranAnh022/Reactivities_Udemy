@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { makeAutoObservable, runInAction } from "mobx";
 import { User, UserFormValues } from "../models/user";
 import agent from "../api/agent";
