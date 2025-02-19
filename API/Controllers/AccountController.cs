@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.DTOs;
 using API.Services;
+using Application.Profiles;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            AppUser user = await _userManger.FindByEmailAsync(loginDto.Email);
+            AppUser user = await _userManger.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
             if (user == null) return Unauthorized();
 
@@ -35,7 +36,8 @@ namespace API.Controllers
             if (result)
             {
                 return CreateUserObject(user);
-            };
+            }
+            ;
 
             return Unauthorized();
         }
@@ -49,13 +51,15 @@ namespace API.Controllers
             {
                 ModelState.AddModelError("username", "Username is already taken");
                 return ValidationProblem();
-            };
+            }
+            ;
 
             if (await _userManger.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
                 ModelState.AddModelError("email", "Email is already taken");
                 return ValidationProblem();
-            };
+            }
+            ;
 
             var user = new AppUser
             {
@@ -78,7 +82,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            var user = await _userManger.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            var user = await _userManger.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
             return CreateUserObject(user);
 
         }
@@ -88,10 +92,11 @@ namespace API.Controllers
             return new UserDto
             {
                 DisplayName = user.DisName,
-                Image = null,
+                Image = user?.Photos.FirstOrDefault(x => x.IsMain)?.Url,
                 Token = _tokenService.CreateToken(user),
                 UserName = user.UserName
             };
         }
+
     }
 }
