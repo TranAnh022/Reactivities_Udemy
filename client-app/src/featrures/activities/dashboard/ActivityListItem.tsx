@@ -32,7 +32,7 @@ function ActivityListItem({ activity }: Props) {
                 {activity.title}
               </Item.Header>
               <Item.Description>
-                Hosted by <Link to={`/profiles/${activity.host?.username}`}>{activity.host?.displayName} </Link>
+                Hosted by <Link to={`/profiles/${activity.host?.userName}`}>{activity.host?.displayName} </Link>
               </Item.Description>
               {activity.isHost && (
                 <Item.Description>

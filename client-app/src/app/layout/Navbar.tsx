@@ -32,7 +32,7 @@ function Navbar() {
             <Dropdown.Menu>
               <Dropdown.Item
                 as={Link}
-                to={`/profiles/${user?.username}`}
+                to={`/profiles/${user?.userName}`}
                 text="My profile"
                 icon="user"
               />

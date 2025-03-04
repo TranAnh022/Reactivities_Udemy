@@ -14,12 +14,12 @@ function ActivityListAttendees({ attendees }: Props) {
       {attendees.map((attendee, index) => (
         <Popup
           hoverable
-          key={attendee.username}
+          key={attendee.userName}
           trigger={
             <List.Item
               key={index}
               as={Link}
-              to={`/profiles/${attendee.username}`}
+              to={`/profiles/${attendee.userName}`}
             >
               <Image
                 size="mini"

@@ -46,7 +46,7 @@ const PhotoUploadWidget = ({ loading, uploadPhoto }: Props) => {
           <>
             <div
               className="img-preview"
-              style={{ minWidth: 200, overflow: "hidden" }}
+              style={{ height: 200, overflow: "hidden" }}
             />
             <Button.Group widths={2}>
               <Button
@@ -55,7 +55,12 @@ const PhotoUploadWidget = ({ loading, uploadPhoto }: Props) => {
                 positive
                 icon="check"
               />
-              <Button disabled={loading} onClick={() => setFiles([])} positive icon="close" />
+              <Button
+                disabled={loading}
+                onClick={() => setFiles([])}
+                positive
+                icon="close"
+              />
             </Button.Group>
           </>
         )}

@@ -13,7 +13,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (username) loadProfile(username);
-  }, [loadingProfile, username]);
+  }, [username]);
 
   return (
     <Grid>

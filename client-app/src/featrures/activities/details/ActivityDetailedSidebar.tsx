@@ -11,6 +11,7 @@ interface Pros {
 
 export default observer(function ActivityDetailedSidebar({ activity: { attendees,host } }: Pros) {
   if (!attendees) return null;
+
   return (
     <>
       <Segment
@@ -33,7 +34,7 @@ export default observer(function ActivityDetailedSidebar({ activity: { attendees
                   color="orange"
                   ribbon="right"
                 >
-                  Host
+                  Host {attendee.userName}
                 </Label>
               )}
               <Image size="tiny" src={attendee.image || "/assets/user.png"} />
